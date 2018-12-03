@@ -19,6 +19,7 @@ class TasksTableSeeder extends Seeder
         for ($i = 0; $i < 10; $i++) { 
             Task::create([
             'description' => $faker->sentence,
+            //'isCompleted' => $faker->true,
             ]);               
         }
     }

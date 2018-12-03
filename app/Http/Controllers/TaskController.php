@@ -14,8 +14,13 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return Task::all();
-
+        $tasks = Task::where('isCompleted', false)->orderBy('id', 'DEC')->get();
+        $compTasks = Task::where('isCompleted', true)->get();
+        return response()->json([
+            'tasks' => $tasks,
+            'compTasks' => $compTasks
+        ]);
+        //return Task::all();
     }
 
     /**
@@ -26,17 +31,33 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $task = Task::create($request->all);
-
-        return response()->json($task, 201);
+       $task = Task::create($request->all());
+       return response()->json([
+            "code" => 200,
+            "message" => "Task added successfully!"
+       ]);
+       // return response()->json($task, 201);
     }
 
+
+    //Added new function
+    public function complete($id)
+    {
+        $task = Task::find($id);
+        $task->isCompleted = true;
+        $task->save();
+        return response()->json([
+            "code" => 200,
+            "message" => "Task listed as completed!"
+        ]);
+    }
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function show(Task $task)
     {
         return Task::find($task);
@@ -64,10 +85,15 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function delete(Task $task)
+    public function destroy($id)
     {
-        $task->delete();
-
-        return response()->json(null, 204);
+        $task = Task::find($id);
+        $task = $task->delete();
+        return response()->json([
+            "code" => 200,
+            "message" => "Task deleted successfully!"
+        ]);
+        //$task->delete();
+        //return response()->json(null, 204);
     }
 }
